@@ -1,31 +1,46 @@
 package entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Subscription {
 
 	@Id
-	@Column(name = "subscription_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@Column(nullable = false, unique = true)
 	private Long subscriptionId;
 
-	@NotNull(message = "User id is required")
-	@Column(name = "user_id")
-	private Long userId;
+	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
 
-	@Column(name = "creation_ts")
+	@Column(nullable = false)
 	private LocalDateTime creationTs;
 
-	@Column(name = "expiration_ts")
+	@Column(nullable = false)
 	private LocalDateTime expirationTs;
 
-	@Column(name = "transaction_id")
-	private String transactionid;
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public Long getSubscriptionId() {
 		return subscriptionId;
@@ -35,12 +50,12 @@ public class Subscription {
 		this.subscriptionId = subscriptionId;
 	}
 
-	public Long getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public LocalDateTime getCreationTs() {
@@ -59,11 +74,4 @@ public class Subscription {
 		this.expirationTs = expirationTs;
 	}
 
-	public String getTransactionid() {
-		return transactionid;
-	}
-
-	public void setTransactionid(String transactionid) {
-		this.transactionid = transactionid;
-	}
 }

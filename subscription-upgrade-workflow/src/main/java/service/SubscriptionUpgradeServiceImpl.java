@@ -64,7 +64,6 @@ public class SubscriptionUpgradeServiceImpl implements SubscriptionUpgradeServic
 	private void updateSubscription(Subscription subscription, String transactionId) {
 		subscription.setCreationTs(LocalDateTime.now());
 		subscription.setExpirationTs(LocalDateTime.now().plusMonths(12));
-		subscription.setTransactionid(transactionId);
 		subscriptionRepository.save(subscription);
 	}
 

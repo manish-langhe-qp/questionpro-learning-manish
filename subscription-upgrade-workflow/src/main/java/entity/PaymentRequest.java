@@ -1,9 +1,16 @@
 package entity;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
 public class PaymentRequest {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	@NotBlank(message = "Name on card is required.")
 	@Pattern(regexp = "^[a-zA-Z ]+$", message = "Name on card must only contain letters and spaces.")
