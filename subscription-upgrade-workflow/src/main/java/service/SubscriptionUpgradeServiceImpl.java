@@ -2,6 +2,7 @@ package service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +35,9 @@ public class SubscriptionUpgradeServiceImpl implements SubscriptionUpgradeServic
 	}
 
 	@Override
-	public String upgradeSubscription(Long subscriptionId, PaymentRequest paymentRequest) {
+	public String upgradeSubscription(Long userId, PaymentRequest paymentRequest) {
 		paymentRequestValidator.validate(paymentRequest);
-		Subscription subscription = validateAndGetSubscription(subscriptionId);
+		Subscription subscription = getActiveSubscriptionByUserId(userId);
 		PaymentResponse paymentResponse = processPayment(paymentRequest);
 
 		if (!"success".equalsIgnoreCase(paymentResponse.getStatus())) {
@@ -47,9 +48,9 @@ public class SubscriptionUpgradeServiceImpl implements SubscriptionUpgradeServic
 		return "Subscription upgraded successfully! Transaction ID: " + paymentResponse.getTransactionId();
 	}
 
-	private Subscription validateAndGetSubscription(Long subscriptionId) {
-		return subscriptionRepository.findById(subscriptionId)
-				.orElseThrow(() -> new IllegalArgumentException("Subscription ID not found."));
+	private Subscription getActiveSubscriptionByUserId(Long userId) {
+		return subscriptionRepository.findActiveSubscriptionByUserId(userId)
+				.orElseThrow(() -> new IllegalArgumentException("No active subscription found for user ID: " + userId));
 	}
 
 	private PaymentResponse processPayment(PaymentRequest paymentRequest) {
@@ -74,7 +75,7 @@ public class SubscriptionUpgradeServiceImpl implements SubscriptionUpgradeServic
 		subscriptions.forEach(subscription -> {
 			PaymentRequest paymentRequest = preparePaymentRequest(subscription);
 			try {
-				upgradeSubscription(subscription.getSubscriptionId(), paymentRequest);
+				upgradeSubscription(subscription.getUser().getId(), paymentRequest);
 			} catch (Exception e) {
 				System.err.println("Failed to process subscription ID: " + subscription.getSubscriptionId()
 						+ " - Error: " + e.getMessage());

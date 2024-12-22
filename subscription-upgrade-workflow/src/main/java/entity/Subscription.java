@@ -24,15 +24,15 @@ public class Subscription {
 	@Column(nullable = false, unique = true)
 	private Long subscriptionId;
 
-	@ManyToOne
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
-
 	@Column(nullable = false)
 	private LocalDateTime creationTs;
 
 	@Column(nullable = false)
 	private LocalDateTime expirationTs;
+	
+	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
 
 	public Long getId() {
 		return id;

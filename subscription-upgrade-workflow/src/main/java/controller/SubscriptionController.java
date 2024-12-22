@@ -26,10 +26,9 @@ public class SubscriptionController {
 	}
 
 	@PostMapping("/{subscriptionId}/upgrade")
-	public ResponseEntity<String> upgradeSubscription(@PathVariable Long subscriptionId,
-			@Valid @RequestBody PaymentRequest paymentRequest) {
-		logger.info("Attempting to upgrade subscription: {}", subscriptionId);
-		String message = subscriptionUpgradeService.upgradeSubscription(subscriptionId, paymentRequest);
+	public ResponseEntity<String> upgradeSubscription(@Valid @RequestBody PaymentRequest paymentRequest) {
+		logger.info("Attempting to upgrade subscription: {}", paymentRequest.getUser_id());
+		String message = subscriptionUpgradeService.upgradeSubscription(paymentRequest.getUser_id(), paymentRequest);
 		return ResponseEntity.ok(message);
 	}
 

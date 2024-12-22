@@ -4,6 +4,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public class PaymentRequest {
@@ -27,6 +28,17 @@ public class PaymentRequest {
 	@NotBlank(message = "Expiry date is required.")
 	@Pattern(regexp = "^(0[1-9]|1[0-2])/\\d{2}$", message = "Expiry date must be in MM/YY format.")
 	private String expiryDate;
+	
+	@NotNull(message = "User ID is required.")
+	private Long user_id;
+
+	public Long getUser_id() {
+		return user_id;
+	}
+
+	public void setUser_id(Long user_id) {
+		this.user_id = user_id;
+	}
 
 	public String getName() {
 		return name;

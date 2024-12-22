@@ -4,7 +4,7 @@ import entity.PaymentRequest;
 
 public interface SubscriptionUpgradeService {
 
-	String upgradeSubscription(Long subscriptionId, PaymentRequest paymentRequest);
+	String upgradeSubscription(Long userId, PaymentRequest paymentRequest);
 
 	void autoInitiateTransactions();
 }
