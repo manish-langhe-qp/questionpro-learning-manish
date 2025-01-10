@@ -17,10 +17,6 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 public class Subscription {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
 	@Column(nullable = false, unique = true)
 	private Long subscriptionId;
 
@@ -29,18 +25,16 @@ public class Subscription {
 
 	@Column(nullable = false)
 	private LocalDateTime expirationTs;
-	
+
+	@Column(nullable = false)
+	private String status; // PENDING_PAYMENT, ACTIVE, SUSPENDED, etc.
+
+	@Column(nullable = false)
+	private boolean autoRenew;
+
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public Long getSubscriptionId() {
 		return subscriptionId;
@@ -72,6 +66,36 @@ public class Subscription {
 
 	public void setExpirationTs(LocalDateTime expirationTs) {
 		this.expirationTs = expirationTs;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public boolean isAutoRenew() {
+		return autoRenew;
+	}
+
+	public void setAutoRenew(boolean autoRenew) {
+		this.autoRenew = autoRenew;
+	}
+
+	// Utility methods for subscription status
+	public boolean isPendingPayment() {
+		return "PENDING_PAYMENT".equalsIgnoreCase(status);
+	}
+
+	public boolean isExpiringSoon() {
+		LocalDateTime now = LocalDateTime.now();
+		return expirationTs.isAfter(now) && expirationTs.isBefore(now.plusDays(7)); // Expiring within 7 days
+	}
+
+	public boolean isOverdue() {
+		return expirationTs.isBefore(LocalDateTime.now()) && "ACTIVE".equalsIgnoreCase(status);
 	}
 
 }

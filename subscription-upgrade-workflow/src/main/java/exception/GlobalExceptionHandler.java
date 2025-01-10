@@ -24,10 +24,9 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(ex.getMessage());
 	}
 
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<String> handleGeneralException(Exception ex) {
-		logger.error("Unexpected error occurred: {}", ex.getMessage(), ex);
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body("An unexpected error occurred. Please try again later.");
+	@ExceptionHandler(SubscriptionNotFoundException.class)
+	public ResponseEntity<String> handleSubscriptionNotFoundException(SubscriptionNotFoundException ex) {
+		logger.error("Subscription NotFound Exception: {}", ex.getMessage(), ex);
+		return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(ex.getMessage());
 	}
 }

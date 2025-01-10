@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import entity.PaymentRequest;
 import jakarta.validation.Valid;
 import service.SubscriptionUpgradeService;
+import serviceImpl.SubscriptionUpgradeScheduler;
 
 @RestController
 @RequestMapping("api/v1/subscriptions")
@@ -21,7 +22,9 @@ public class SubscriptionController {
 	private static final Logger logger = LoggerFactory.getLogger(SubscriptionController.class);
 	private final SubscriptionUpgradeService subscriptionUpgradeService;
 
-	public SubscriptionController(SubscriptionUpgradeService subscriptionUpgradeService) {
+	public SubscriptionController(SubscriptionUpgradeService subscriptionUpgradeService,
+			SubscriptionUpgradeScheduler subscriptionUpgradeScheduler) {
+		super();
 		this.subscriptionUpgradeService = subscriptionUpgradeService;
 	}
 
@@ -30,12 +33,5 @@ public class SubscriptionController {
 		logger.info("Attempting to upgrade subscription: {}", paymentRequest.getUser_id());
 		String message = subscriptionUpgradeService.upgradeSubscription(paymentRequest.getUser_id(), paymentRequest);
 		return ResponseEntity.ok(message);
-	}
-
-	@PostMapping("/batch-upgrade")
-	public ResponseEntity<String> initiateBatchUpgrade() {
-		logger.info("Starting batch upgrade process.");
-		subscriptionUpgradeService.autoInitiateTransactions();
-		return ResponseEntity.ok("Batch upgrade process started successfully.");
 	}
 }
