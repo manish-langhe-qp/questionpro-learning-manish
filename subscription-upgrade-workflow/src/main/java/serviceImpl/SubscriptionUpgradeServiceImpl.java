@@ -10,32 +10,44 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import entity.PaymentRequest;
-import entity.PaymentResponse;
+import dto.UpgradeSubscriptionRequest;
+import dto.UpgradeSusbcriptionResponse;
+import entity.Plan;
 import entity.Subscription;
+import entity.User;
+import exception.BadRequestException;
 import exception.PaymentProcessingException;
-import exception.SubscriptionNotFoundException;
+import exception.ResourceNotFoundException;
+import repository.PlanRepository;
 import repository.SubscriptionRepository;
+import repository.UserRepository;
 import service.PaymentService;
 import service.SubscriptionUpgradeService;
-import validator.PaymentRequestValidator;
+import validator.UserSubscriptionValidator;
 
 @Service
 public class SubscriptionUpgradeServiceImpl implements SubscriptionUpgradeService {
 
 	private final SubscriptionRepository subscriptionRepository;
+	private final UserRepository userRepository;
 	private final PaymentService paymentService;
+	private final PlanRepository planRepository;
 
-	public SubscriptionUpgradeServiceImpl(SubscriptionRepository subscriptionRepository,
-			PaymentService paymentService) {
+	public SubscriptionUpgradeServiceImpl(SubscriptionRepository subscriptionRepository, UserRepository userRepository,
+			PaymentService paymentService, PlanRepository planRepository) {
 		this.subscriptionRepository = subscriptionRepository;
+		this.userRepository = userRepository;
 		this.paymentService = paymentService;
+		this.planRepository = planRepository;
 	}
 
-	public String upgradeSubscription(Long userId, PaymentRequest paymentRequest) {
-		Subscription subscription = subscriptionRepository.findActiveSubscriptionByUserId(userId)
-				.orElseThrow(() -> new SubscriptionNotFoundException("Subscription not found for userId" + userId));
-		PaymentResponse paymentResponse = paymentService.processPayment(paymentRequest);
+	public String upgradeSubscription(Long userId, UpgradeSubscriptionRequest userSubscriptionRequest) {
+		validateUser(userId);
+		Subscription subscription = validateSubscription(userSubscriptionRequest.getSubscriptionID(), userId);
+		UserSubscriptionValidator.validateUserSubscription(userSubscriptionRequest);
+		Plan plan = getPlanOrThrowException(userSubscriptionRequest.getPlanId());
+
+		UpgradeSusbcriptionResponse paymentResponse = paymentService.processPayment(userSubscriptionRequest);
 
 		if (!"success".equalsIgnoreCase(paymentResponse.getStatus())) {
 			throw new PaymentProcessingException(paymentResponse.getError());
@@ -45,8 +57,32 @@ public class SubscriptionUpgradeServiceImpl implements SubscriptionUpgradeServic
 		return "Subscription upgraded successfully! Transaction ID: " + paymentResponse.getTransactionId();
 	}
 
+	private Plan getPlanOrThrowException(Long planId) {
+		Plan plan = planRepository.findById(planId).orElseThrow(() -> new ResourceNotFoundException("Plan not found for ID " + planId));
+		if (plan == null) {
+            throw new ResourceNotFoundException("Plan not found for ID " + planId);
+        }
+		return plan;
+	}
+
+	private Subscription validateSubscription(Long subscriptionID, Long userId) {
+		if (subscriptionID == null) {
+			throw new IllegalArgumentException("Invalid Subscription ID provided.");
+		}
+		return subscriptionRepository.findByIdAndUserId(subscriptionID, userId)
+				.orElseThrow(() -> new ResourceNotFoundException(
+						"Subscription not found for ID: " + subscriptionID + " and User ID: " + userId));
+	}
+
+	private void validateUser(Long userId) {
+		if (userId == null) {
+			throw new IllegalArgumentException("Invalid User ID provided.");
+		}
+	}
+
 	private void updateSubscription(Subscription subscription, String transactionId) {
 		subscription.setCreationTs(LocalDateTime.now());
+		subscription.setTransactionID(transactionId);
 		subscription.setExpirationTs(LocalDateTime.now().plusMonths(12));
 		subscriptionRepository.save(subscription);
 	}

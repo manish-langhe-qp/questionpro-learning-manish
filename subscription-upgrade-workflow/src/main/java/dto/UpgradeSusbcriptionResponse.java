@@ -1,6 +1,6 @@
-package entity;
+package dto;
 
-public class PaymentResponse {
+public class UpgradeSusbcriptionResponse {
 
 	private String status;
 	private String transactionId;

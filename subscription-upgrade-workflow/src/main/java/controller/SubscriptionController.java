@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import entity.PaymentRequest;
+import dto.UpgradeSubscriptionRequest;
 import jakarta.validation.Valid;
 import service.SubscriptionUpgradeService;
 import serviceImpl.SubscriptionUpgradeScheduler;
@@ -29,9 +29,9 @@ public class SubscriptionController {
 	}
 
 	@PostMapping("/{subscriptionId}/upgrade")
-	public ResponseEntity<String> upgradeSubscription(@Valid @RequestBody PaymentRequest paymentRequest) {
-		logger.info("Attempting to upgrade subscription: {}", paymentRequest.getUser_id());
-		String message = subscriptionUpgradeService.upgradeSubscription(paymentRequest.getUser_id(), paymentRequest);
+	public ResponseEntity<String> upgradeSubscription(@Valid @RequestBody UpgradeSubscriptionRequest ueSubscriptionRequest) {
+		logger.info("Attempting to upgrade subscription: {}", ueSubscriptionRequest.getUser_id());
+		String message = subscriptionUpgradeService.upgradeSubscription(ueSubscriptionRequest.getUser_id(), ueSubscriptionRequest);
 		return ResponseEntity.ok(message);
 	}
 }

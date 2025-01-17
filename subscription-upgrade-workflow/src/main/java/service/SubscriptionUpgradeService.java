@@ -1,9 +1,9 @@
 package service;
 
-import entity.PaymentRequest;
+import dto.UpgradeSubscriptionRequest;
 
 public interface SubscriptionUpgradeService {
 
-	public String upgradeSubscription(Long userId, PaymentRequest paymentRequest);
+	public String upgradeSubscription(Long userId, UpgradeSubscriptionRequest paymentRequest);
 
 }

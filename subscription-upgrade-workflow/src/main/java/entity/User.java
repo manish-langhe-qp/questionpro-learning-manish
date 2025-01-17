@@ -12,7 +12,7 @@ import jakarta.persistence.OneToMany;
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long UserId;
 
 	@Column(nullable = false)
 	private String name;
@@ -23,12 +23,12 @@ public class User {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Subscription> subscriptions;
 
-	public Long getId() {
-		return id;
+	public Long getUserId() {
+		return UserId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setUserId(Long userId) {
+		UserId = userId;
 	}
 
 	public String getName() {

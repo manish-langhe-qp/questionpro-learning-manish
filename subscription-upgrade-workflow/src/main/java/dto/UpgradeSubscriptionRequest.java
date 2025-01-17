@@ -1,4 +1,4 @@
-package entity;
+package dto;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -7,11 +7,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public class PaymentRequest {
+public class UpgradeSubscriptionRequest {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long subscriptionID;
+	
+	@Id
+	@NotNull(message = "Plan ID is required.")
+	private Long planId;
 
 	@NotBlank(message = "Name on card is required.")
 	@Pattern(regexp = "^[a-zA-Z ]+$", message = "Name on card must only contain letters and spaces.")
@@ -31,6 +35,23 @@ public class PaymentRequest {
 	
 	@NotNull(message = "User ID is required.")
 	private Long user_id;
+	
+
+	public Long getSubscriptionID() {
+		return subscriptionID;
+	}
+
+	public void setSubscriptionID(Long subscriptionID) {
+		this.subscriptionID = subscriptionID;
+	}
+	
+	public Long getPlanId() {
+		return planId;
+	}
+
+	public void setPlanId(Long planId) {
+		this.planId = planId;
+	}
 
 	public Long getUser_id() {
 		return user_id;

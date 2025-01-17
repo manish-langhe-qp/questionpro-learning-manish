@@ -24,9 +24,15 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(ex.getMessage());
 	}
 
-	@ExceptionHandler(SubscriptionNotFoundException.class)
-	public ResponseEntity<String> handleSubscriptionNotFoundException(SubscriptionNotFoundException ex) {
-		logger.error("Subscription NotFound Exception: {}", ex.getMessage(), ex);
+	@ExceptionHandler(ResourceNotFoundException.class)
+	public ResponseEntity<String> handleSubscriptionNotFoundException(ResourceNotFoundException ex) {
+		logger.error("Resource NotFound Exception: {}", ex.getMessage(), ex);
+		return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(ex.getMessage());
+	}
+	
+	@ExceptionHandler(BadRequestException.class)
+	public ResponseEntity<String> handleSubscriptionNotFoundException(BadRequestException ex) {
+		logger.error("Bad Request Exception: {}", ex.getMessage(), ex);
 		return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(ex.getMessage());
 	}
 }

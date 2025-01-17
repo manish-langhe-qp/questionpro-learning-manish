@@ -1,9 +1,9 @@
 package service;
 
-import entity.PaymentRequest;
-import entity.PaymentResponse;
+import dto.UpgradeSubscriptionRequest;
+import dto.UpgradeSusbcriptionResponse;
 
 public interface PaymentService {
 
-	public PaymentResponse processPayment(PaymentRequest paymentRequest);
+	public UpgradeSusbcriptionResponse processPayment(UpgradeSubscriptionRequest paymentRequest);
 }

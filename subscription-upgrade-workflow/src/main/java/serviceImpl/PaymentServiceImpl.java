@@ -7,35 +7,33 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import entity.PaymentRequest;
-import entity.PaymentResponse;
+import dto.UpgradeSubscriptionRequest;
+import dto.UpgradeSusbcriptionResponse;
 import exception.PaymentProcessingException;
 import service.PaymentService;
-import validator.PaymentRequestValidator;
+import validator.UserSubscriptionValidator;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
 	private final RestTemplate restTemplate;
-	private final PaymentRequestValidator paymentRequestValidator;
+	private final UserSubscriptionValidator paymentRequestValidator;
 
 	@Value("${payment.gateway.url}")
 	private String paymentGatewayUrl;
 
-	public PaymentServiceImpl(RestTemplate restTemplate, PaymentRequestValidator paymentRequestValidator) {
+	public PaymentServiceImpl(RestTemplate restTemplate, UserSubscriptionValidator paymentRequestValidator) {
 		this.restTemplate = restTemplate;
 		this.paymentRequestValidator = paymentRequestValidator;
 	}
 
 	@Override
-	public PaymentResponse processPayment(PaymentRequest paymentRequest) {
+	public UpgradeSusbcriptionResponse processPayment(UpgradeSubscriptionRequest paymentRequest) {
 		Objects.requireNonNull(paymentRequest, "PaymentRequest cannot be null");
 
-		paymentRequestValidator.validate(paymentRequest);
-
 		try {
-			ResponseEntity<PaymentResponse> response = restTemplate.postForEntity(paymentGatewayUrl, paymentRequest,
-					PaymentResponse.class);
+			ResponseEntity<UpgradeSusbcriptionResponse> response = restTemplate.postForEntity(paymentGatewayUrl, paymentRequest,
+					UpgradeSusbcriptionResponse.class);
 
 			if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
 				throw new PaymentProcessingException(

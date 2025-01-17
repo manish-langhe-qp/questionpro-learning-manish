@@ -31,10 +31,17 @@ public class Subscription {
 
 	@Column(nullable = false)
 	private boolean autoRenew;
+	
+	@Column(nullable = false)
+	private String transactionID; // 
 
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
+	
+	@ManyToOne
+    @JoinColumn(name = "plan_id", nullable = false)
+    private Plan plan;
 
 	public Long getSubscriptionId() {
 		return subscriptionId;
@@ -82,6 +89,14 @@ public class Subscription {
 
 	public void setAutoRenew(boolean autoRenew) {
 		this.autoRenew = autoRenew;
+	}
+
+	public String getTransactionID() {
+		return transactionID;
+	}
+
+	public void setTransactionID(String transactionID) {
+		this.transactionID = transactionID;
 	}
 
 	// Utility methods for subscription status
