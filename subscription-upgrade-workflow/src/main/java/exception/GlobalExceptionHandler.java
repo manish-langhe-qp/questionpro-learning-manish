@@ -25,14 +25,20 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(ResourceNotFoundException.class)
-	public ResponseEntity<String> handleSubscriptionNotFoundException(ResourceNotFoundException ex) {
+	public ResponseEntity<String> handleResourceNotFoundException(ResourceNotFoundException ex) {
 		logger.error("Resource NotFound Exception: {}", ex.getMessage(), ex);
 		return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(ex.getMessage());
 	}
 	
 	@ExceptionHandler(BadRequestException.class)
-	public ResponseEntity<String> handleSubscriptionNotFoundException(BadRequestException ex) {
+	public ResponseEntity<String> handleBadRequestException(BadRequestException ex) {
 		logger.error("Bad Request Exception: {}", ex.getMessage(), ex);
+		return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(ex.getMessage());
+	}
+	
+	@ExceptionHandler(UnauthorizedAccessException.class)
+	public ResponseEntity<String> handleUnauthorizedAccessException(UnauthorizedAccessException ex) {
+		logger.error("Unauthorized Access Exception: {}", ex.getMessage(), ex);
 		return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(ex.getMessage());
 	}
 }

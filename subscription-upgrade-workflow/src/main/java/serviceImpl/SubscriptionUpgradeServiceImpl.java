@@ -19,6 +19,7 @@ import entity.User;
 import exception.BadRequestException;
 import exception.PaymentProcessingException;
 import exception.ResourceNotFoundException;
+import exception.UnauthorizedAccessException;
 import repository.PlanRepository;
 import repository.SubscriptionRepository;
 import repository.UserRepository;
@@ -50,7 +51,7 @@ public class SubscriptionUpgradeServiceImpl implements SubscriptionUpgradeServic
 			if (!"success".equalsIgnoreCase(paymentResponse.getStatus())) {
 				throw new PaymentProcessingException(paymentResponse.getError());
 			}
-			updateSubscription(subscription, plan, paymentResponse.getTransactionId());
+			updateSubscription(subscription, plan);
 			return createSuccessResponse(paymentResponse.getTransactionId());
 		} catch (PaymentProcessingException | ResourceNotFoundException | IllegalArgumentException ex) {
 			return handleUpgradeFailure(ex);
@@ -79,15 +80,15 @@ public class SubscriptionUpgradeServiceImpl implements SubscriptionUpgradeServic
 	}
 
 	private Subscription getValidatedSubscriptions(Long subscriptionID, Long userId) {
-		if (subscriptionID == null) {
-			throw new IllegalArgumentException("Invalid Subscription ID provided.");
-		}
-		return subscriptionRepository.findByIdAndUserId(subscriptionID, userId)
-				.orElseThrow(() -> new ResourceNotFoundException(
-						"Subscription not found for ID: " + subscriptionID + " and User ID: " + userId));
+		Subscription subscription = subscriptionRepository.findById(subscriptionID)
+	            .orElseThrow(() -> new ResourceNotFoundException("Subscription not found for ID: " + subscriptionID));
+	    if (!subscription.getUser().getUserId().equals(userId)) {
+	        throw new UnauthorizedAccessException("User does not have access to this subscription.");
+	    }
+	    return subscription;
 	}
 
-	private void updateSubscription(Subscription subscription, Plan plan, String transactionId) {
+	private void updateSubscription(Subscription subscription, Plan plan) {
 
 		LocalDateTime newExpirationDate = LocalDateTime.now().plusDays(plan.getNumberOfDays());
 
