@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dto.UpgradeSubscriptionRequest;
+import dto.UpgradeSusbcriptionResponse;
 import jakarta.validation.Valid;
+import schedulerService.SubscriptionUpgradeScheduler;
 import service.SubscriptionUpgradeService;
-import serviceImpl.SubscriptionUpgradeScheduler;
 
 @RestController
 @RequestMapping("api/v1/subscriptions")
@@ -29,9 +30,9 @@ public class SubscriptionController {
 	}
 
 	@PostMapping("/{subscriptionId}/upgrade")
-	public ResponseEntity<String> upgradeSubscription(@Valid @RequestBody UpgradeSubscriptionRequest ueSubscriptionRequest) {
+	public ResponseEntity<UpgradeSusbcriptionResponse> upgradeSubscription(@Valid @RequestBody UpgradeSubscriptionRequest ueSubscriptionRequest) {
 		logger.info("Attempting to upgrade subscription: {}", ueSubscriptionRequest.getSubscriptionID());
-		String message = subscriptionUpgradeService.upgradeSubscription(ueSubscriptionRequest);
-		return ResponseEntity.ok(message);
+		UpgradeSusbcriptionResponse response = subscriptionUpgradeService.upgradeSubscription(ueSubscriptionRequest);
+		return ResponseEntity.ok(response);
 	}
 }

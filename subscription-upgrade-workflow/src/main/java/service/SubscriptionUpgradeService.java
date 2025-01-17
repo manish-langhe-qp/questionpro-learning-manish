@@ -1,9 +1,10 @@
 package service;
 
 import dto.UpgradeSubscriptionRequest;
+import dto.UpgradeSusbcriptionResponse;
 
 public interface SubscriptionUpgradeService {
 
-	public String upgradeSubscription(UpgradeSubscriptionRequest userSubscriptionRequest);
+	public UpgradeSusbcriptionResponse upgradeSubscription(UpgradeSubscriptionRequest userSubscriptionRequest);
 
 }

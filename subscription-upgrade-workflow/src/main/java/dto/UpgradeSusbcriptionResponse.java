@@ -1,9 +1,15 @@
 package dto;
 
-public class UpgradeSusbcriptionResponse {
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+public class UpgradeSusbcriptionResponse {
+	@JsonProperty("status")
 	private String status;
+	
+	@JsonProperty("transaction_id")
 	private String transactionId;
+	
+	@JsonProperty("error_message")
 	private String error;
 
 	public String getStatus() {
