@@ -19,7 +19,6 @@ import entity.User;
 import exception.BadRequestException;
 import exception.PaymentProcessingException;
 import exception.ResourceNotFoundException;
-import exception.UnauthorizedAccessException;
 import repository.PlanRepository;
 import repository.SubscriptionRepository;
 import repository.UserRepository;
@@ -80,12 +79,12 @@ public class SubscriptionUpgradeServiceImpl implements SubscriptionUpgradeServic
 	}
 
 	private Subscription getValidatedSubscriptions(Long subscriptionID, Long userId) {
-		Subscription subscription = subscriptionRepository.findById(subscriptionID)
-	            .orElseThrow(() -> new ResourceNotFoundException("Subscription not found for ID: " + subscriptionID));
-	    if (!subscription.getUser().getUserId().equals(userId)) {
-	        throw new UnauthorizedAccessException("User does not have access to this subscription.");
-	    }
-	    return subscription;
+		if (subscriptionID == null) {
+			throw new IllegalArgumentException("Invalid Subscription ID provided.");
+		}
+		return subscriptionRepository.findByIdAndUserId(subscriptionID, userId)
+				.orElseThrow(() -> new ResourceNotFoundException(
+						"Subscription not found for ID: " + subscriptionID + " and User ID: " + userId));
 	}
 
 	private void updateSubscription(Subscription subscription, Plan plan) {
