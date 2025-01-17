@@ -17,9 +17,6 @@ public class Plan {
 	private String name;
 	
 	@Column(nullable = false)
-	private String type;
-	
-	@Column(nullable = false)
 	private float amount;
 	
 	@Column(nullable = false)
@@ -34,11 +31,10 @@ public class Plan {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Plan(Long id, String name, String type, float amount, int numberOfDays) {
+	public Plan(Long id, String name, float amount, int numberOfDays) {
 		super();
 		this.id = id;
 		this.name = name;
-		this.type = type;
 		this.amount = amount;
 		this.numberOfDays = numberOfDays;
 	}
@@ -57,14 +53,6 @@ public class Plan {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 
 	public float getAmount() {

@@ -30,8 +30,8 @@ public class SubscriptionController {
 
 	@PostMapping("/{subscriptionId}/upgrade")
 	public ResponseEntity<String> upgradeSubscription(@Valid @RequestBody UpgradeSubscriptionRequest ueSubscriptionRequest) {
-		logger.info("Attempting to upgrade subscription: {}", ueSubscriptionRequest.getUser_id());
-		String message = subscriptionUpgradeService.upgradeSubscription(ueSubscriptionRequest.getUser_id(), ueSubscriptionRequest);
+		logger.info("Attempting to upgrade subscription: {}", ueSubscriptionRequest.getSubscriptionID());
+		String message = subscriptionUpgradeService.upgradeSubscription(ueSubscriptionRequest);
 		return ResponseEntity.ok(message);
 	}
 }

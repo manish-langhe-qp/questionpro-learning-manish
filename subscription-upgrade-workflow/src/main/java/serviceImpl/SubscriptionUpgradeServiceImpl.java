@@ -29,21 +29,20 @@ import validator.UserSubscriptionValidator;
 public class SubscriptionUpgradeServiceImpl implements SubscriptionUpgradeService {
 
 	private final SubscriptionRepository subscriptionRepository;
-	private final UserRepository userRepository;
 	private final PaymentService paymentService;
 	private final PlanRepository planRepository;
 
-	public SubscriptionUpgradeServiceImpl(SubscriptionRepository subscriptionRepository, UserRepository userRepository,
+	public SubscriptionUpgradeServiceImpl(SubscriptionRepository subscriptionRepository,
 			PaymentService paymentService, PlanRepository planRepository) {
 		this.subscriptionRepository = subscriptionRepository;
-		this.userRepository = userRepository;
 		this.paymentService = paymentService;
 		this.planRepository = planRepository;
 	}
-
-	public String upgradeSubscription(Long userId, UpgradeSubscriptionRequest userSubscriptionRequest) {
-		validateUser(userId);
-		Subscription subscription = validateSubscription(userSubscriptionRequest.getSubscriptionID(), userId);
+	
+	@Override
+	public String upgradeSubscription(UpgradeSubscriptionRequest userSubscriptionRequest) {
+		validateUser(userSubscriptionRequest.getUser_id());
+		Subscription subscription = validateSubscription(userSubscriptionRequest.getSubscriptionID(), userSubscriptionRequest.getUser_id());
 		UserSubscriptionValidator.validateUserSubscription(userSubscriptionRequest);
 		Plan plan = getPlanOrThrowException(userSubscriptionRequest.getPlanId());
 
@@ -53,15 +52,19 @@ public class SubscriptionUpgradeServiceImpl implements SubscriptionUpgradeServic
 			throw new PaymentProcessingException(paymentResponse.getError());
 		}
 
-		updateSubscription(subscription, paymentResponse.getTransactionId());
+		updateSubscription(subscription, plan, paymentResponse.getTransactionId());
 		return "Subscription upgraded successfully! Transaction ID: " + paymentResponse.getTransactionId();
 	}
 
 	private Plan getPlanOrThrowException(Long planId) {
-		Plan plan = planRepository.findById(planId).orElseThrow(() -> new ResourceNotFoundException("Plan not found for ID " + planId));
+		Plan plan = planRepository.findById(planId)
+				.orElseThrow(() -> new ResourceNotFoundException("Plan not found for ID " + planId));
 		if (plan == null) {
-            throw new ResourceNotFoundException("Plan not found for ID " + planId);
-        }
+			throw new ResourceNotFoundException("Plan not found for ID " + planId);
+		}
+		if (plan.getNumberOfDays() <= 0) {
+	        throw new IllegalArgumentException("Plan duration must be greater than 0 days");
+	    }
 		return plan;
 	}
 
@@ -80,10 +83,14 @@ public class SubscriptionUpgradeServiceImpl implements SubscriptionUpgradeServic
 		}
 	}
 
-	private void updateSubscription(Subscription subscription, String transactionId) {
-		subscription.setCreationTs(LocalDateTime.now());
+	private void updateSubscription(Subscription subscription, Plan plan, String transactionId) {
+
+		LocalDateTime newExpirationDate = LocalDateTime.now().plusDays(plan.getNumberOfDays());
+
+		subscription.setupdationTs(LocalDateTime.now());
 		subscription.setTransactionID(transactionId);
-		subscription.setExpirationTs(LocalDateTime.now().plusMonths(12));
+		subscription.setExpirationTs(newExpirationDate);
+		subscription.setPlan(plan);
 		subscriptionRepository.save(subscription);
 	}
 

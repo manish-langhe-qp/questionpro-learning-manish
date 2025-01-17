@@ -4,6 +4,6 @@ import dto.UpgradeSubscriptionRequest;
 
 public interface SubscriptionUpgradeService {
 
-	public String upgradeSubscription(Long userId, UpgradeSubscriptionRequest paymentRequest);
+	public String upgradeSubscription(UpgradeSubscriptionRequest userSubscriptionRequest);
 
 }

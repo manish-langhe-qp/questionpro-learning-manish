@@ -21,7 +21,7 @@ public class Subscription {
 	private Long subscriptionId;
 
 	@Column(nullable = false)
-	private LocalDateTime creationTs;
+	private LocalDateTime updationTs;
 
 	@Column(nullable = false)
 	private LocalDateTime expirationTs;
@@ -59,12 +59,12 @@ public class Subscription {
 		this.user = user;
 	}
 
-	public LocalDateTime getCreationTs() {
-		return creationTs;
+	public LocalDateTime getupdationTs() {
+		return updationTs;
 	}
 
-	public void setCreationTs(LocalDateTime creationTs) {
-		this.creationTs = creationTs;
+	public void setupdationTs(LocalDateTime updationTs) {
+		this.updationTs = updationTs;
 	}
 
 	public LocalDateTime getExpirationTs() {
@@ -97,6 +97,14 @@ public class Subscription {
 
 	public void setTransactionID(String transactionID) {
 		this.transactionID = transactionID;
+	}
+
+	public Plan getPlan() {
+		return plan;
+	}
+
+	public void setPlan(Plan plan) {
+		this.plan = plan;
 	}
 
 	// Utility methods for subscription status
