@@ -31,9 +31,6 @@ public class Subscription {
 
 	@Column(nullable = false)
 	private boolean autoRenew;
-	
-	@Column(nullable = false)
-	private String transactionID; // 
 
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
@@ -89,14 +86,6 @@ public class Subscription {
 
 	public void setAutoRenew(boolean autoRenew) {
 		this.autoRenew = autoRenew;
-	}
-
-	public String getTransactionID() {
-		return transactionID;
-	}
-
-	public void setTransactionID(String transactionID) {
-		this.transactionID = transactionID;
 	}
 
 	public Plan getPlan() {

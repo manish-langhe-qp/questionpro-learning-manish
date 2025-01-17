@@ -92,7 +92,6 @@ public class SubscriptionUpgradeServiceImpl implements SubscriptionUpgradeServic
 		LocalDateTime newExpirationDate = LocalDateTime.now().plusDays(plan.getNumberOfDays());
 
 		subscription.setupdationTs(LocalDateTime.now());
-		subscription.setTransactionID(transactionId);
 		subscription.setExpirationTs(newExpirationDate);
 		subscription.setPlan(plan);
 		subscriptionRepository.save(subscription);
